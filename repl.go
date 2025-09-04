@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/Nightails/pokedexcli/internal/api"
 )
 
 func cleanInput(text string) []string {
@@ -12,6 +14,7 @@ func cleanInput(text string) []string {
 }
 
 func startRelp() {
+	config := api.Config{}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -28,6 +31,6 @@ func startRelp() {
 			fmt.Println(err)
 			continue
 		}
-		cmd.callback()
+		cmd.callback(&config)
 	}
 }
