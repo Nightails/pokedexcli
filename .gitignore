@@ -1,2 +1,4 @@
 pokedexcli
 *.log
+
+.idea/
