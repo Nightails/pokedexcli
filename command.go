@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -11,7 +12,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*api.Config) error
+	callback    func(*Config) error
 }
 
 func getCommand(cmd string) (cliCommand, error) {
@@ -44,13 +45,13 @@ func getCommand(cmd string) (cliCommand, error) {
 	return cliCommand{}, errors.New("unknown command")
 }
 
-func commandExit(config *api.Config) error {
+func commandExit(config *Config) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(config *api.Config) error {
+func commandHelp(config *Config) error {
 	message := `
 Welcome to the Pokedex!
 Usage:
@@ -61,11 +62,11 @@ exit: Exit the Pokedex
 map: List 20 location names
 mapb: List previous 20 location names
 `
-	fmt.Println(message)
+	fmt.Printf("%v/n", message)
 	return nil
 }
 
-func commandMap(config *api.Config) error {
+func commandMap(config *Config) error {
 	var url string
 	if config.NextURL == "" {
 		url = "https://pokeapi.co/api/v2/location-area/"
@@ -73,33 +74,59 @@ func commandMap(config *api.Config) error {
 		url = config.NextURL
 	}
 
-	areaNames, err := api.GetAreaNames(url, config)
+	data, err := api.GetPokedexAPI(url)
 	if err != nil {
 		return err
 	}
 
-	for _, name := range areaNames {
+	names, err := getAreaNames(data, config)
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
 		fmt.Println(name)
 	}
 
 	return nil
 }
 
-func commandMapBack(config *api.Config) error {
+func commandMapBack(config *Config) error {
 	if config.PreviousURL == "" {
 		fmt.Println("you're on the first page")
 		return nil
 	}
 
 	url := config.PreviousURL
-	areaNames, err := api.GetAreaNames(url, config)
+	data, err := api.GetPokedexAPI(url)
 	if err != nil {
 		return err
 	}
 
-	for _, name := range areaNames {
+	names, err := getAreaNames(data, config)
+	if err != nil {
+		return err
+	}
+	fmt.Println("previous page")
+	for _, name := range names {
 		fmt.Println(name)
 	}
 
 	return nil
+}
+
+// getAreaNames returns a slice of area names from the given data
+func getAreaNames(data []byte, config *Config) ([]string, error) {
+	var apiRes api.PokedexAPIResponse
+	if err := json.Unmarshal(data, &apiRes); err != nil {
+		return []string{}, err
+	}
+
+	config.NextURL = apiRes.Next
+	config.PreviousURL = apiRes.Previous
+
+	var names []string
+	for _, str := range apiRes.Results {
+		names = append(names, str.Name)
+	}
+	return names, nil
 }

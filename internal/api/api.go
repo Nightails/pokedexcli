@@ -1,15 +1,10 @@
 package api
 
 import (
-	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 )
-
-type Config struct {
-	NextURL     string
-	PreviousURL string
-}
 
 type PokedexAPIResponse struct {
 	Count    int    `json:"count"`
@@ -21,29 +16,21 @@ type PokedexAPIResponse struct {
 	} `json:"results"`
 }
 
-func GetAreaNames(url string, config *Config) ([]string, error) {
+func GetPokedexAPI(url string) ([]byte, error) {
 	res, err := http.Get(url)
 	if err != nil {
-		return []string{}, err
+		return []byte{}, err
 	}
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			_ = errors.New("failed to close body")
+		}
+	}(res.Body)
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return []string{}, err
+		return []byte{}, err
 	}
-
-	var apiRes PokedexAPIResponse
-	if err := json.Unmarshal(body, &apiRes); err != nil {
-		return []string{}, err
-	}
-
-	config.NextURL = apiRes.Next
-	config.PreviousURL = apiRes.Previous
-
-	var names []string
-	for _, str := range apiRes.Results {
-		names = append(names, str.Name)
-	}
-	return names, nil
+	return body, nil
 }

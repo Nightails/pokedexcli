@@ -5,16 +5,19 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/Nightails/pokedexcli/internal/api"
 )
+
+type Config struct {
+	NextURL     string
+	PreviousURL string
+}
 
 func cleanInput(text string) []string {
 	return strings.Fields(strings.ToLower(text))
 }
 
 func startRelp() {
-	config := api.Config{}
+	config := Config{}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
