@@ -74,9 +74,16 @@ func commandMap(config *Config) error {
 		url = config.NextURL
 	}
 
-	data, err := api.GetPokedexAPI(url)
-	if err != nil {
-		return err
+	var data []byte
+	entry, exist := config.Cache.Get(url)
+	if !exist {
+		var err error
+		data, err = api.GetPokedexAPI(url)
+		if err != nil {
+			return err
+		}
+	} else {
+		data = entry
 	}
 
 	names, err := getAreaNames(data, config)
@@ -97,9 +104,16 @@ func commandMapBack(config *Config) error {
 	}
 
 	url := config.PreviousURL
-	data, err := api.GetPokedexAPI(url)
-	if err != nil {
-		return err
+	var data []byte
+	entry, exist := config.Cache.Get(url)
+	if !exist {
+		var err error
+		data, err = api.GetPokedexAPI(url)
+		if err != nil {
+			return err
+		}
+	} else {
+		data = entry
 	}
 
 	names, err := getAreaNames(data, config)

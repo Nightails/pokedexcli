@@ -5,19 +5,24 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/Nightails/pokedexcli/internal/pokecache"
 )
 
 type Config struct {
 	NextURL     string
 	PreviousURL string
+	Cache       *pokecache.Cache
 }
 
 func cleanInput(text string) []string {
 	return strings.Fields(strings.ToLower(text))
 }
 
-func startRelp() {
+func startRepl() {
 	config := Config{}
+	config.Cache = pokecache.NewCache(5 * time.Second)
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
