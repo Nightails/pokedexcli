@@ -6,16 +6,6 @@ import (
 	"net/http"
 )
 
-type PokedexAPIResponse struct {
-	Count    int    `json:"count"`
-	Next     string `json:"next"`
-	Previous string `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
-}
-
 func GetPokedexAPI(url string) ([]byte, error) {
 	res, err := http.Get(url)
 	if err != nil {

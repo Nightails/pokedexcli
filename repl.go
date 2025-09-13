@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -13,6 +14,7 @@ import (
 type Config struct {
 	NextURL     string
 	PreviousURL string
+	Argument    string
 	Cache       *pokecache.Cache
 }
 
@@ -39,6 +41,13 @@ func startRepl() {
 			fmt.Println(err)
 			continue
 		}
-		cmd.callback(&config)
+		if len(input) == 2 {
+			config.Argument = input[1]
+		}
+
+		if err := cmd.callback(&config); err != nil {
+			log.Fatal(err)
+			return
+		}
 	}
 }
