@@ -21,12 +21,12 @@ func commandInspect(conf *config.Config) error {
 	Height: 3
 	Weight: 18
 	Stats:
-		-hp: 40
-		-attack: 45
-		-defense: 40
-		-special-attack: 35
-		-special-defense: 35
-		-speed: 56
+		- hp: 40
+		- attack: 45
+		- defense: 40
+		- special-attack: 35
+		- special-defense: 35
+		- speed: 56
 	Types:
 		- normal
 		- flying
@@ -45,7 +45,7 @@ func commandInspect(conf *config.Config) error {
 func displayStats(pokemon *config.Pokemon) {
 	fmt.Println("Stats:")
 	for _, stat := range pokemon.Stats {
-		fmt.Printf("-%s: %d\n", stat.Stat.Name, stat.BaseStat)
+		fmt.Printf("- %s: %d\n", stat.Stat.Name, stat.BaseStat)
 	}
 }
 
@@ -53,6 +53,6 @@ func displayStats(pokemon *config.Pokemon) {
 func displayTypes(pokemon *config.Pokemon) {
 	fmt.Println("Types:")
 	for _, type_ := range pokemon.Types {
-		fmt.Printf("-%s\n", type_.Type.Name)
+		fmt.Printf("- %s\n", type_.Type.Name)
 	}
 }
