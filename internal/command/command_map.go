@@ -8,17 +8,6 @@ import (
 	"github.com/Nightails/pokedexcli/internal/config"
 )
 
-// LocationsResponse is the response from the PokeAPI, with a list of location areas
-type LocationsResponse struct {
-	Count    int    `json:"count"`
-	Next     string `json:"next"`
-	Previous string `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
-}
-
 func commandMap(config *config.Config) error {
 	var url string
 	if config.NextURL == "" {
@@ -88,14 +77,14 @@ func commandMapBack(config *config.Config) error {
 }
 
 // getAreaNames returns a slice of area names from the given data
-func getAreaNames(data []byte, config *config.Config) ([]string, error) {
-	var apiRes LocationsResponse
+func getAreaNames(data []byte, conf *config.Config) ([]string, error) {
+	var apiRes config.Locations
 	if err := json.Unmarshal(data, &apiRes); err != nil {
 		return []string{}, err
 	}
 
-	config.NextURL = apiRes.Next
-	config.PreviousURL = apiRes.Previous
+	conf.NextURL = apiRes.Next
+	conf.PreviousURL = apiRes.Previous
 
 	var names []string
 	for _, str := range apiRes.Results {

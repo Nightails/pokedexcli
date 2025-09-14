@@ -20,6 +20,8 @@ func cleanInput(text string) []string {
 func startRepl() {
 	conf := config.Config{}
 	conf.Cache = pokecache.NewCache(5 * time.Second)
+	conf.Pokemon = make(map[string]config.Pokemon)
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
