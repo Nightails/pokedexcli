@@ -49,6 +49,11 @@ func GetCommand(cmd string) (CliCommand, error) {
 			description: "Inspect a pokemon",
 			Callback:    commandInspect,
 		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List all caught pokemon",
+			Callback:    commandPokedex,
+		},
 	}
 
 	if c, exist := commands[cmd]; exist {
